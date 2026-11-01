@@ -42,6 +42,10 @@ jobs:
   backend:
     name: Backend Checks
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql+psycopg2://chess:chess@localhost:5432/chess_academy
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: ci-test-secret-key-not-for-production
 
     defaults:
       run:
