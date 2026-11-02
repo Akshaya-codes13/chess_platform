@@ -1,3 +1,4 @@
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -5,8 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.routers import auth
 
 app = FastAPI(title="Chess Academy API", version="0.1.0")
+
+app.include_router(auth.router)
 
 app.add_middleware(
     CORSMiddleware,

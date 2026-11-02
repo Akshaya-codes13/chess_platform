@@ -11,3 +11,4 @@ redis
 arq
 httpx
 pytest
+email-validator
