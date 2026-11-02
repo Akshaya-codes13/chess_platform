@@ -1,0 +1,133 @@
+/*
+ * Admin module styles. Admin pages reuse the Trainer module's component kit
+ * and its scoped tokens (.tr-root, --tr-*); only admin-specific layout lives
+ * here.
+ */
+
+.tr-dialog.ad-dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+.ad-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tr-gap);
+}
+
+.ad-dl {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 8px 16px;
+  margin: 0;
+}
+
+.ad-dl dt {
+  color: var(--tr-muted);
+}
+
+.ad-dl dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ad-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--tr-border);
+  border-radius: var(--tr-radius);
+  padding: 8px;
+}
+
+.ad-picker label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ad-picker label:hover {
+  background: var(--tr-accent-soft);
+}
+
+.ad-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ad-breakdown li {
+  display: grid;
+  grid-template-columns: minmax(96px, 30%) 1fr 3.5rem;
+  align-items: center;
+  gap: 12px;
+}
+
+.ad-breakdown__count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ad-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ad-activity li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--tr-border);
+  padding-bottom: 10px;
+}
+
+.ad-activity li:last-child {
+  border-bottom: 0;
+}
+
+.ad-issues {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--tr-danger);
+}
+
+.ad-fen {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 0.85em;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .ad-dl {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .ad-dl dd {
+    margin-bottom: 8px;
+  }
+
+  .ad-breakdown li {
+    grid-template-columns: 1fr 3rem;
+  }
+
+  .ad-breakdown li > :nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
