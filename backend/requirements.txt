@@ -12,3 +12,4 @@ arq
 httpx
 pytest
 email-validator
+python-multipart

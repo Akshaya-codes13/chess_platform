@@ -29,6 +29,10 @@ class Assignment(TimestampMixin, Base):
             "status IN ('draft', 'published', 'completed', 'cancelled')",
             name="valid_assignment_status",
         ),
+        CheckConstraint(
+            "start_date IS NULL OR due_date IS NULL OR due_date >= start_date",
+            name="valid_assignment_dates",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -73,6 +77,11 @@ class Assignment(TimestampMixin, Base):
         server_default=text("'draft'"),
         nullable=False,
         index=True,
+    )
+
+    start_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
     )
 
     due_date: Mapped[datetime | None] = mapped_column(

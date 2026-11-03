@@ -11,6 +11,8 @@ export const adminApi = {
   dashboard: () => api('/admin/dashboard'),
   activity: (query) => api('/admin/activity', { query }),
   reports: () => api('/admin/reports/overview'),
+  dailyReport: (days) => api('/admin/reports/daily', { query: { days } }),
+  refreshDailyReport: () => api('/admin/reports/daily/refresh', { method: 'POST' }),
 
   users: (query) => api('/admin/users', { query }),
   user: (id) => api(`/admin/users/${id}`),

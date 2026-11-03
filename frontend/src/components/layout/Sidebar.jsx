@@ -1,5 +1,6 @@
 import { isActive, Link, useLocation } from '../../routes/router';
 import NavIcon from './NavIcon';
+import NotificationBell from './NotificationBell';
 import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ nav, user, onSignOut }) {
@@ -36,7 +37,11 @@ export default function Sidebar({ nav, user, onSignOut }) {
           <div className="sidebar-theme">
             <ThemeToggle />
           </div>
+          <NotificationBell to={`/${user.role}/notifications`} />
           <span className="sidebar-user-name">{user.full_name}</span>
+          <Link to={`/${user.role}/settings`} className="link-button">
+            Settings
+          </Link>
           <button type="button" className="link-button" onClick={onSignOut}>
             Sign out
           </button>

@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components -- route table; lazy pages are not exported */
+import { lazy } from 'react';
 import AssignmentFormPage from './AssignmentFormPage';
 import AssignmentProgressPage from './AssignmentProgressPage';
 import AssignmentsPage from './AssignmentsPage';
@@ -12,6 +14,8 @@ import SessionDetailPage from './SessionDetailPage';
 import SessionFormPage from './SessionFormPage';
 import SessionsPage from './SessionsPage';
 import StudentPerformancePage from './StudentPerformancePage';
+const ReportsPage = lazy(() => import('./ReportsPage'));
+const SubmissionReviewPage = lazy(() => import('./SubmissionReviewPage'));
 
 // Static segments ("new") are listed before parameterised ones. The
 // dashboard lives at /trainer/dashboard so the "/trainer" prefix does not
@@ -46,6 +50,12 @@ export const trainerRoutes = [
   { path: '/trainer/sessions/new', element: SessionFormPage, title: 'Schedule session' },
   { path: '/trainer/sessions/:sessionId', element: SessionDetailPage, title: 'Session' },
   { path: '/trainer/sessions/:sessionId/edit', element: SessionFormPage, title: 'Edit session' },
+  {
+    path: '/trainer/assignments/:assignmentId/submissions/:studentId',
+    element: SubmissionReviewPage,
+    title: 'Submission',
+  },
+  { path: '/trainer/reports', element: ReportsPage, title: 'Reports' },
   { path: '/trainer/profile', element: ProfilePage, title: 'Profile' },
 ];
 
@@ -55,5 +65,6 @@ export const trainerNav = [
   { to: '/trainer/puzzles', label: 'Puzzles', icon: 'puzzle' },
   { to: '/trainer/assignments', label: 'Assignments', icon: 'assignments' },
   { to: '/trainer/sessions', label: 'Sessions', icon: 'schedule' },
+  { to: '/trainer/reports', label: 'Reports', icon: 'statistics' },
   { to: '/trainer/profile', label: 'Profile', icon: 'profile' },
 ];

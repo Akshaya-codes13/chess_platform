@@ -37,6 +37,10 @@ from app.models.notification import Notification
 from app.models.audit_log import AuditLog
 from app.models.refresh_token import RefreshToken
 
+from app.models.game_library import GameDatabase, GameFolder, PgnGame
+from app.models.daily_summary import DailyPlatformSummary, DailyTrainerSummary
+from app.models.media_file import MediaFile
+
 
 __all__ = [
     "User",
@@ -68,4 +72,10 @@ __all__ = [
     "Notification",
     "AuditLog",
     "RefreshToken",
+    "GameDatabase",
+    "GameFolder",
+    "PgnGame",
+    "DailyPlatformSummary",
+    "DailyTrainerSummary",
+    "MediaFile",
 ]

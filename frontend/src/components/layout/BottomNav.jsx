@@ -1,11 +1,11 @@
 import { isActive, Link, useLocation } from '../../routes/router';
+import { bottomNavItems } from './bottomNavItems';
 import NavIcon from './NavIcon';
 
-/** Mobile navigation: the items flagged `primary`, or the first five. */
+/** Mobile navigation; whatever doesn't fit lives in the top-right AccountMenu. */
 export default function BottomNav({ nav }) {
   const { path } = useLocation();
-  const primary = nav.filter((item) => item.primary);
-  const items = (primary.length ? primary : nav).slice(0, 5);
+  const items = bottomNavItems(nav);
 
   return (
     <nav className="bottom-nav" aria-label="Main">

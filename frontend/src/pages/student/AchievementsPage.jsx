@@ -1,4 +1,6 @@
+import ConsistencyCalendar from '../../components/charts/ConsistencyCalendar';
 import Button from '../../components/ui/Button';
+import ProgressBar from '../../components/ui/ProgressBar';
 import Card from '../../components/ui/Card';
 import EmptyState from '../../components/ui/EmptyState';
 import LoadState from '../../components/ui/LoadState';
@@ -25,10 +27,17 @@ export default function AchievementsPage() {
       />
 
       <section className="xp-hero" aria-label="XP summary">
-        <p className="xp-total">
-          {data.total_xp}
-          <span> XP</span>
-        </p>
+        <div className="xp-level">
+          <p className="xp-total">
+            {data.total_xp}
+            <span> XP</span>
+          </p>
+          <p className="xp-level__name">Level {data.xp_level.level}</p>
+          <ProgressBar
+            value={data.xp_level.progress_percent}
+            label={`${data.xp_level.xp_to_next_level} XP to level ${data.xp_level.level + 1}`}
+          />
+        </div>
         <dl className="xp-facts">
           <div>
             <dt>Current streak</dt>
@@ -52,8 +61,18 @@ export default function AchievementsPage() {
               {data.badges_earned} of {data.badges_total}
             </dd>
           </div>
+          <div>
+            <dt>Assignments completed</dt>
+            <dd>{data.assignments_completed}</dd>
+          </div>
         </dl>
       </section>
+
+      <Card
+        title={`Consistency · ${data.active_days} active days in the last ${data.activity_calendar.length}`}
+      >
+        <ConsistencyCalendar days={data.activity_calendar} title="Puzzles attempted per day" />
+      </Card>
 
       <div className="two-column">
         <Card title="Next milestone">
@@ -95,7 +114,7 @@ export default function AchievementsPage() {
 
       <p className="hint">
         XP and badges are awarded by the academy server when a solve is verified. Each puzzle earns
-        XP once, and each badge is awarded once.
+        XP once, completing an assignment earns a bonus once, and each badge is awarded once.
       </p>
     </div>
   );

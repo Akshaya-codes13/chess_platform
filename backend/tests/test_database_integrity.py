@@ -30,6 +30,7 @@ from app.models import (
     User,
     XPEvent,
 )
+from app.services.xp_service import badge_counters
 from scripts import seed
 
 
@@ -359,8 +360,10 @@ def test_student_progress_consistency(seeded_db, email):
         )
     )
 
+    counters = badge_counters(db, progress)
+
     for code, (counter, threshold) in seed.BADGE_REQUIREMENTS.items():
-        assert (code in earned) == (getattr(progress, counter) >= threshold)
+        assert (code in earned) == (counters[counter] >= threshold)
 
 
 def test_calculate_streaks():

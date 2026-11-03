@@ -1,7 +1,8 @@
 
 import uuid
+from datetime import datetime
 
-from sqlalchemy import CheckConstraint, ForeignKey, String, Text, Uuid, text
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text, Uuid, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -15,6 +16,10 @@ class Post(TimestampMixin, Base):
         CheckConstraint(
             "type IN ('article', 'photo', 'blog')",
             name="valid_post_type",
+        ),
+        CheckConstraint(
+            "status IN ('draft', 'published', 'archived')",
+            name="valid_post_status",
         ),
     )
 
@@ -40,4 +45,8 @@ class Post(TimestampMixin, Base):
     status: Mapped[str] = mapped_column(
         String(20), default="draft",
         server_default=text("'draft'"), nullable=False, index=True,
+    )
+
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True,
     )

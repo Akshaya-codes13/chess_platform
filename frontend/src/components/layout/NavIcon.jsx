@@ -13,6 +13,11 @@ const PATHS = {
   users: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3 3-5 6-5s6 2 6 5M17 11h4M19 9v4',
   reports: 'M5 3h10l4 4v14H5zM9 17v-3M12 17v-6M15 17v-4',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  games: 'M4 4h16v16H4zM4 12h16M12 4v16M8 8h.01M16 16h.01',
+  content: 'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01',
+  feedback: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
+  statistics: 'M4 20V4M4 20h16M8 16l3-4 3 2 5-7',
+  submissions: 'M6 3h9l4 4v14H6zM9 13l2 2 4-4',
 };
 
 export default function NavIcon({ name }) {

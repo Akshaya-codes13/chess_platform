@@ -1,27 +1,28 @@
 /*
- * Trainer module styles. Colours come from the shared tokens in index.css
- * (--color-*, --space-*, --radius) with fallbacks, so the module follows
- * the app theme, including dark mode, when those tokens are defined.
+ * Trainer module styles. Colours map onto the shared tokens in index.css
+ * (--color-*, --space-*, --radius), so the module follows the app palette
+ * and its light/dark theme toggle.
  */
 
 .tr-root {
-  --tr-ink: var(--color-text, #1f2421);
-  --tr-muted: var(--color-text-muted, #66706b);
-  --tr-surface: var(--color-surface, #ffffff);
-  --tr-bg: var(--color-bg, #f6f4ee);
-  --tr-border: var(--color-border, #e2ded3);
-  --tr-accent: var(--color-primary, #1f6f50);
-  --tr-accent-ink: var(--color-on-primary, #ffffff);
-  --tr-accent-soft: var(--color-primary-soft, rgba(31, 111, 80, 0.1));
-  --tr-brass: var(--color-accent, #b8862b);
-  --tr-danger: var(--color-danger, #b3261e);
-  --tr-warning: var(--color-warning, #9a6400);
-  --tr-success: var(--color-success, #1f6f50);
-  --tr-info: var(--color-info, #2b5a8a);
+  --tr-ink: var(--color-ink);
+  --tr-muted: var(--color-ink-muted);
+  --tr-surface: var(--color-surface);
+  --tr-bg: var(--color-paper);
+  --tr-border: var(--color-rule);
+  --tr-accent: var(--color-accent);
+  --tr-accent-fill: var(--color-accent-fill);
+  --tr-accent-ink: #ffffff;
+  --tr-accent-soft: var(--color-accent-soft);
+  --tr-brass: var(--color-reward);
+  --tr-danger: var(--color-danger);
+  --tr-warning: var(--color-warning);
+  --tr-success: var(--color-success);
+  --tr-info: #3e6487;
   --tr-radius: var(--radius, 10px);
   --tr-gap: var(--space-4, 16px);
-  --tr-sq-light: #efe6d2;
-  --tr-sq-dark: #7d9a7a;
+  --tr-sq-light: var(--color-board-light);
+  --tr-sq-dark: var(--color-board-dark);
 
   color: var(--tr-ink);
   display: flex;
@@ -31,19 +32,8 @@
   min-width: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .tr-root {
-    --tr-ink: var(--color-text, #ece9e1);
-    --tr-muted: var(--color-text-muted, #a4aba6);
-    --tr-surface: var(--color-surface, #1d2120);
-    --tr-bg: var(--color-bg, #141716);
-    --tr-border: var(--color-border, #323836);
-    --tr-accent: var(--color-primary, #4fb489);
-    --tr-accent-ink: var(--color-on-primary, #0e1a14);
-    --tr-accent-soft: var(--color-primary-soft, rgba(79, 180, 137, 0.15));
-    --tr-sq-light: #c9bfa8;
-    --tr-sq-dark: #56705a;
-  }
+:root[data-theme='dark'] .tr-root {
+  --tr-info: #93b4d4;
 }
 
 .tr-muted {
@@ -218,7 +208,7 @@
   font-size: 0.85rem;
 }
 .tr-btn--primary {
-  background: var(--tr-accent);
+  background: var(--tr-accent-fill);
   color: var(--tr-accent-ink);
 }
 .tr-btn--primary:hover:not(:disabled) {
@@ -332,7 +322,7 @@ textarea.tr-input {
   color: var(--tr-success);
 }
 .tr-callout--info {
-  background: rgba(43, 90, 138, 0.1);
+  background: rgba(62, 100, 135, 0.1);
   color: var(--tr-info);
 }
 
@@ -451,11 +441,11 @@ textarea.tr-input {
   white-space: nowrap;
 }
 .tr-pill--success {
-  background: rgba(31, 111, 80, 0.14);
+  background: rgba(63, 122, 74, 0.14);
   color: var(--tr-success);
 }
 .tr-pill--info {
-  background: rgba(43, 90, 138, 0.14);
+  background: rgba(62, 100, 135, 0.14);
   color: var(--tr-info);
 }
 .tr-pill--warning {
@@ -817,11 +807,11 @@ textarea.tr-input {
   border-radius: var(--tr-radius);
   padding: 20px;
   max-width: min(440px, calc(100vw - 32px));
-  background: var(--color-surface, #fff);
-  color: var(--color-text, #1f2421);
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 .tr-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(36, 22, 13, 0.45);
 }
 .tr-dialog__title {
   margin: 0 0 8px;
@@ -829,7 +819,7 @@ textarea.tr-input {
   font-family: Georgia, serif;
 }
 .tr-dialog__body {
-  color: var(--color-text-muted, #66706b);
+  color: var(--color-ink-muted);
   margin-bottom: 18px;
 }
 .tr-dialog__actions {
@@ -839,14 +829,14 @@ textarea.tr-input {
 }
 .tr-dialog .tr-btn--ghost {
   color: inherit;
-  border-color: #ccc;
+  border-color: var(--color-rule);
 }
 .tr-dialog .tr-btn--primary {
-  background: var(--color-primary, #1f6f50);
+  background: var(--color-accent-fill);
   color: #fff;
 }
 .tr-dialog .tr-btn--danger {
-  background: var(--color-danger, #b3261e);
+  background: var(--color-danger);
   color: #fff;
 }
 

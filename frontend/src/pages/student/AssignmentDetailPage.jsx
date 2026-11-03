@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { api } from '../../api/client';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import EmptyState from '../../components/ui/EmptyState';
@@ -78,11 +80,7 @@ export default function AssignmentDetailPage() {
             { label: 'Attempts', value: progress.attempts },
           ]}
         />
-        <p className="row-meta">
-          {submission
-            ? `Submitted automatically on ${formatDate(submission.submitted_at)} with ${submission.score} points · ${statusLabel(submission.status)}`
-            : 'Submitted automatically once every puzzle is solved.'}
-        </p>
+        <SubmitControl assignment={data} onSubmitted={reload} />
         {submission?.trainer_feedback && (
           <blockquote className="feedback">
             <p>{submission.trainer_feedback}</p>
@@ -133,6 +131,55 @@ export default function AssignmentDetailPage() {
           />
         )}
       </Card>
+    </div>
+  );
+}
+
+function SubmitControl({ assignment, onSubmitted }) {
+  const { submission, progress } = assignment;
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const returned = submission?.status === 'returned';
+  const canSubmit = !assignment.is_closed && progress.attempts > 0 && (!submission || returned);
+
+  async function submit() {
+    setBusy(true);
+    setError('');
+    try {
+      await api(`/student/assignments/${assignment.id}/submit`, { method: 'POST' });
+      onSubmitted();
+    } catch (err) {
+      setError(err.message || 'The assignment could not be submitted.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  let text;
+  if (!submission) text = 'Submitted automatically once every puzzle is solved.';
+  else if (returned)
+    text = `Your trainer returned submission ${submission.attempt_number} — improve your work and submit again.`;
+  else
+    text = `Submission ${submission.attempt_number} on ${formatDate(submission.submitted_at)} with ${submission.score} points · ${statusLabel(submission.status)}`;
+
+  return (
+    <div className="submit-control">
+      <p className="row-meta">{text}</p>
+      {canSubmit && (
+        <Button
+          variant={returned ? 'primary' : 'secondary'}
+          size="sm"
+          onClick={submit}
+          disabled={busy}
+        >
+          {busy ? 'Submitting…' : returned ? 'Submit again' : 'Hand in now'}
+        </Button>
+      )}
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

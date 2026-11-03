@@ -2,11 +2,12 @@ import os
 import sys
 import chess
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Allow running this script from the backend directory.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from app.core.config import settings
 
 from sqlalchemy import func, or_, select
 
@@ -37,37 +38,14 @@ from app.models import (
     DailyActivity,
 )
 
-
-def validate_puzzle_solution(fen, solution):
-    """Validate a puzzle FEN and its complete UCI solution."""
-    try:
-        board = chess.Board(fen)
-
-        if not board.is_valid():
-            raise ValueError("Invalid chess position.")
-
-        moves = solution.split()
-
-        if not moves:
-            raise ValueError("Puzzle solution cannot be empty.")
-
-        for uci in moves:
-            try:
-                move = chess.Move.from_uci(uci)
-            except ValueError as exc:
-                raise ValueError(f"Invalid UCI move: {uci}") from exc
-
-            if move not in board.legal_moves:
-                raise ValueError(
-                    f"Illegal move {uci} in position: {board.fen()}"
-                )
-
-            board.push(move)
-
-        return board
-
-    except ValueError:
-        raise
+# XP, badge and streak rules are shared with the API.
+from app.services.streak_service import activity_date, calculate_streaks
+from app.services.xp_service import (
+    BADGE_REQUIREMENTS,
+    GAME_RESULT_XP,
+    PUZZLE_SOLVED_XP,
+)
+from app.services.chess_validation import validate_puzzle_solution  # noqa: F401
 
 SEED_USERS = [
     {
@@ -281,10 +259,6 @@ GAME_RESULTS = {
     "draw": None,
 }
 
-PUZZLE_SOLVED_XP = 10
-
-GAME_RESULT_XP = {"win": 15, "draw": 10, "loss": 5}
-
 DEMO_BADGES = [
     {
         "code": "first-puzzle-solved",
@@ -304,14 +278,19 @@ DEMO_BADGES = [
         "description": "Complete your first game.",
         "xp_reward": 10,
     },
+    {
+        "code": "first-assignment-completed",
+        "name": "Homework Hero",
+        "description": "Complete your first assignment.",
+        "xp_reward": 15,
+    },
+    {
+        "code": "five-assignments-completed",
+        "name": "Consistent Learner",
+        "description": "Complete five assignments.",
+        "xp_reward": 40,
+    },
 ]
-
-# Badge code -> (StudentProgress counter, threshold) required to earn it.
-BADGE_REQUIREMENTS = {
-    "first-puzzle-solved": ("puzzles_solved", 1),
-    "three-puzzles-solved": ("puzzles_solved", 3),
-    "first-game-played": ("games_played", 1),
-}
 
 # Student email -> (puzzle lichess_id, is_solved, seconds, attempted_at).
 DEMO_PUZZLE_ATTEMPTS = {
@@ -976,30 +955,6 @@ def game_outcome_for(game, user_id):
 
     winner_id = game.white_id if game.result == "white_win" else game.black_id
     return "win" if winner_id == user_id else "loss"
-
-
-def activity_date(value):
-    return value.astimezone(timezone.utc).date()
-
-
-def calculate_streaks(dates):
-    """Return (current, longest) runs of consecutive activity days.
-
-    The current streak is the run ending on the most recent activity day.
-    """
-    current = longest = 0
-    previous = None
-
-    for day in sorted(dates):
-        if previous is not None and day - previous == timedelta(days=1):
-            current += 1
-        else:
-            current = 1
-
-        longest = max(longest, current)
-        previous = day
-
-    return current, longest
 
 
 def seed_student_progress(db):

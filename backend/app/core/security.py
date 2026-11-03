@@ -51,6 +51,51 @@ def decode_access_token(token: str) -> dict | None:
     except JWTError:
         return None
 
+
+def create_purpose_token(
+    subject: str,
+    token_type: str,
+    expires_delta: timedelta,
+    claims: dict | None = None,
+) -> str:
+    """Create a signed, short-lived token for a single purpose.
+
+    Used for email verification and password reset. The distinct ``type``
+    claim stops these tokens from being accepted as access tokens.
+    """
+    now = datetime.now(timezone.utc)
+
+    payload = {
+        **(claims or {}),
+        "sub": subject,
+        "iat": now,
+        "exp": now + expires_delta,
+        "type": token_type,
+    }
+
+    return jwt.encode(
+        payload,
+        settings.secret_key,
+        algorithm=ALGORITHM,
+    )
+
+
+def decode_purpose_token(token: str, token_type: str) -> dict | None:
+    """Verify a purpose token's signature, expiry and type."""
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[ALGORITHM],
+        )
+    except JWTError:
+        return None
+
+    if payload.get("type") != token_type or not payload.get("sub"):
+        return None
+
+    return payload
+
 # Argon2 password hashing
 pwd_context = CryptContext(
     schemes=["argon2"],

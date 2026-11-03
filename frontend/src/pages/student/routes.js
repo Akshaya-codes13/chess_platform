@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import AchievementsPage from './AchievementsPage';
 import AssignmentDetailPage from './AssignmentDetailPage';
 import AssignmentsPage from './AssignmentsPage';
@@ -8,7 +9,7 @@ import GroupDetailPage from './GroupDetailPage';
 import GroupsPage from './GroupsPage';
 import ProfilePage from './ProfilePage';
 import ProgressPage from './ProgressPage';
-import PuzzlePage from './PuzzlePage';
+const PuzzlePage = lazy(() => import('./PuzzlePage'));
 import SessionDetailPage from './SessionDetailPage';
 import SessionsPage from './SessionsPage';
 

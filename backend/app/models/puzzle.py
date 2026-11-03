@@ -28,6 +28,10 @@ class Puzzle(TimestampMixin, Base):
             "type IN ('puzzle', 'study', 'composition')",
             name="valid_puzzle_type",
         ),
+        CheckConstraint(
+            "status IN ('draft', 'published', 'archived')",
+            name="valid_puzzle_status",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -40,6 +44,15 @@ class Puzzle(TimestampMixin, Base):
     category_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("puzzle_categories.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    # NULL for library puzzles (seeded or imported); set for puzzles a
+    # trainer authored, who is then the only trainer allowed to edit them.
+    created_by_trainer_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("trainer_profiles.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
     )
@@ -98,4 +111,12 @@ class Puzzle(TimestampMixin, Base):
     explanation: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(20),
+        default="published",
+        server_default=text("'published'"),
+        nullable=False,
+        index=True,
     )

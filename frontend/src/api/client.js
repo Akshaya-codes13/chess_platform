@@ -66,17 +66,24 @@ function buildUrl(path, query) {
 }
 
 async function send(path, { method = 'GET', body, query, signal, headers = {} }) {
+  // FormData (file uploads) sets its own multipart Content-Type.
+  const isForm = typeof FormData !== 'undefined' && body instanceof FormData;
   const response = await fetch(buildUrl(path, query), {
     method,
     signal,
     headers: {
-      'Content-Type': 'application/json',
+      ...(isForm ? {} : { 'Content-Type': 'application/json' }),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
     },
-    body: body === undefined ? undefined : typeof body === 'string' ? body : JSON.stringify(body),
+    body: body === undefined || isForm || typeof body === 'string' ? body : JSON.stringify(body),
   });
   return response;
+}
+
+/** Absolute URL of a server path such as an uploaded image ("/media/…"). */
+export function apiUrl(path) {
+  return path?.startsWith('/') ? `${API_URL}${path}` : path;
 }
 
 export async function refreshSession() {

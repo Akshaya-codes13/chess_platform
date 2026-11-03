@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../../api/client';
-import Board from '../../components/chess/Board';
+import ChessBoard from '../../components/chess/ChessBoard';
 import MoveList from '../../components/chess/MoveList';
 import Button from '../../components/ui/Button';
 import LoadState from '../../components/ui/LoadState';
@@ -36,6 +36,9 @@ function freshGame(puzzle) {
     error: '',
     viewPly: null,
     startedAt: Date.now(),
+    hintsUsed: 0,
+    // The latest hint, valid only for the position after `moves`.
+    hint: null,
   };
 }
 
@@ -59,7 +62,7 @@ function PuzzleSolver({ puzzle }) {
 
   async function play(uci) {
     const moves = [...game.moves, uci];
-    setGame((g) => ({ ...g, status: 'checking', error: '', viewPly: null }));
+    setGame((g) => ({ ...g, status: 'checking', error: '', viewPly: null, hint: null }));
 
     try {
       const result = await api(`/student/puzzles/${puzzle.id}/attempts`, {
@@ -68,6 +71,7 @@ function PuzzleSolver({ puzzle }) {
           assignment_id: puzzle.assignment_id,
           moves,
           time_taken_seconds: Math.min(86400, Math.round((Date.now() - game.startedAt) / 1000)),
+          hints_used: game.hintsUsed,
         },
       });
       const nextStatus = result.status === 'in_progress' ? 'playing' : result.status;
@@ -102,6 +106,22 @@ function PuzzleSolver({ puzzle }) {
     setGame(freshGame(puzzle));
   }
 
+  async function askHint() {
+    // First hint: which piece moves. Asking again reveals the move.
+    const level = game.hint ? 2 : 1;
+    try {
+      const hint = await api(`/student/puzzles/${puzzle.id}/hint`, {
+        method: 'POST',
+        body: { assignment_id: puzzle.assignment_id, moves: game.moves, level },
+      });
+      setGame((g) => ({ ...g, hint, hintsUsed: g.hintsUsed + 1, error: '' }));
+    } catch (err) {
+      setGame((g) => ({ ...g, error: err.message || 'No hint is available right now.' }));
+    }
+  }
+
+  const hintShown = game.hint && game.status === 'playing' && !reviewing ? game.hint : null;
+
   function review(ply) {
     setGame((g) => ({ ...g, viewPly: Math.max(0, Math.min(livePly, ply)) }));
   }
@@ -124,7 +144,7 @@ function PuzzleSolver({ puzzle }) {
 
       <div className="puzzle-layout">
         <div className="puzzle-board">
-          <Board
+          <ChessBoard
             fen={boardFen}
             orientation={puzzle.orientation}
             legalMoves={canMove ? game.position.legal_moves : []}
@@ -134,6 +154,23 @@ function PuzzleSolver({ puzzle }) {
             }
             interactive={canMove}
             inCheck={!reviewing && game.position.is_check}
+            highlights={
+              hintShown
+                ? { [hintShown.from_square]: { boxShadow: 'inset 0 0 0 4px var(--color-reward)' } }
+                : {}
+            }
+            arrows={
+              hintShown?.move
+                ? [
+                    {
+                      startSquare: hintShown.move.slice(0, 2),
+                      endSquare: hintShown.move.slice(2, 4),
+                      color: 'rgba(183, 131, 47, 0.85)',
+                    },
+                  ]
+                : []
+            }
+            label="Puzzle board"
           />
           <div className="board-controls" role="group" aria-label="Review moves">
             <Button
@@ -180,7 +217,23 @@ function PuzzleSolver({ puzzle }) {
             >
               Restart
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={askHint}
+              disabled={!canMove || game.hint?.move != null}
+            >
+              {game.hint ? 'Show the move' : 'Hint'}
+            </Button>
           </div>
+          {hintShown && (
+            <p className="hint-text" role="status">
+              {hintShown.move
+                ? `Play ${hintShown.san}.`
+                : `Move your ${hintShown.piece ?? 'piece'} on ${hintShown.from_square}.`}{' '}
+              Hints used: {game.hintsUsed}. Your trainer sees how many hints you used.
+            </p>
+          )}
         </div>
 
         <aside className="puzzle-panel">

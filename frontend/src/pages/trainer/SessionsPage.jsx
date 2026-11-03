@@ -15,7 +15,9 @@ import {
 } from '../../features/trainer/components/ui';
 
 const SCOPES = [
+  { id: 'active', label: 'Active' },
   { id: 'upcoming', label: 'Upcoming' },
+  { id: 'completed', label: 'Completed' },
   { id: 'past', label: 'Past' },
   { id: 'all', label: 'All' },
 ];

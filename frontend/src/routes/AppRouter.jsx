@@ -1,10 +1,11 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, Suspense, useEffect } from 'react';
 import AppShell from '../components/layout/AppShell';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import Spinner from '../components/ui/Spinner';
 import LoginPage from '../pages/LoginPage';
 import { adminNav, adminRoutes } from '../pages/admin/routes';
+import { sharedNav, sharedRoutes } from '../pages/shared/routes';
 import StudentAccessGate from '../pages/student/AccessGate';
 import { studentNav, studentRoutes } from '../pages/student/routes';
 import { useAuth } from '../store/authStore';
@@ -31,6 +32,13 @@ const PORTALS = {
   },
   admin: { home: '/admin/dashboard', routes: adminRoutes, nav: adminNav },
 };
+
+// Settings, notifications, games, library and feedback exist in every portal.
+Object.entries(PORTALS).forEach(([role, portal]) => {
+  if (!portal.routes.length) return;
+  portal.routes = [...portal.routes, ...sharedRoutes(role)];
+  portal.nav = [...portal.nav, ...sharedNav(role)];
+});
 
 function Redirect({ to }) {
   useEffect(() => navigate(to, { replace: true }), [to]);
@@ -106,7 +114,9 @@ function PortalPage({ portal, path }) {
   return (
     <AppShell nav={portal.nav}>
       <DocumentTitle title={match.route.title} />
-      <Page key={path} />
+      <Suspense fallback={<Spinner />}>
+        <Page key={path} />
+      </Suspense>
     </AppShell>
   );
 }

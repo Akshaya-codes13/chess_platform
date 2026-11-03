@@ -41,6 +41,11 @@ export const trainerApi = {
   updateSession: (id, body) => patch(`/trainer/sessions/${id}`, body),
   sessionAction: (id, action) => post(`/trainer/sessions/${id}/${action}`),
   recordAttendance: (id, records) => post(`/trainer/sessions/${id}/attendance`, { records }),
+  submission: (assignmentId, studentId) =>
+    api(`/trainer/assignments/${assignmentId}/submissions/${studentId}`),
+  reviewSubmission: (assignmentId, studentId, body) =>
+    post(`/trainer/assignments/${assignmentId}/submissions/${studentId}/review`, body),
+  dailyReport: (days) => api('/trainer/reports/daily', { query: { days } }),
 };
 
 /** Turn an ApiError (string or FastAPI 422 list detail) into readable text. */

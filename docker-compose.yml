@@ -27,6 +27,20 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/code
+      - media:/data/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # ARQ worker: precomputes the daily report tables (app/worker.py).
+  worker:
+    build: ./backend
+    command: arq app.worker.WorkerSettings
+    env_file: ./backend/.env
+    volumes:
+      - ./backend:/code
     depends_on:
       db:
         condition: service_healthy
@@ -35,3 +49,5 @@ services:
 
 volumes:
   pgdata:
+  # Uploaded images (object storage for the local storage backend).
+  media:

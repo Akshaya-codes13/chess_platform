@@ -91,10 +91,19 @@ function SessionForm({ groups, session, initialGroup }) {
       start_time: toLocalInput(start),
       end_time: toLocalInput(end),
       meeting_url: session?.meeting_url ?? '',
+      audience: 'group', // 'group' | 'selected'
+      student_ids: [],
     };
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const members = useLoader(
+    () =>
+      session || form.audience !== 'selected'
+        ? Promise.resolve(null)
+        : trainerApi.groupStudents(form.group_id, { page_size: 100, sort: 'name' }),
+    [form.group_id, form.audience, Boolean(session)],
+  );
 
   const set = (name) => (value) => {
     setForm((current) => ({ ...current, [name]: value }));
@@ -113,6 +122,8 @@ function SessionForm({ groups, session, initialGroup }) {
       next.start_time = 'Sessions must be scheduled in the future.';
     if (form.meeting_url && !/^https?:\/\//.test(form.meeting_url.trim()))
       next.meeting_url = 'Use a full http:// or https:// link.';
+    if (!session && form.audience === 'selected' && form.student_ids.length === 0)
+      next.student_ids = 'Select at least one student, or schedule for the whole group.';
     if (Object.keys(next).length) {
       setErrors(next);
       return;
@@ -131,7 +142,11 @@ function SessionForm({ groups, session, initialGroup }) {
     try {
       const saved = session
         ? await trainerApi.updateSession(session.id, body)
-        : await trainerApi.createSession({ ...body, group_id: form.group_id });
+        : await trainerApi.createSession({
+            ...body,
+            group_id: form.group_id,
+            ...(form.audience === 'selected' ? { student_ids: form.student_ids } : {}),
+          });
       toast.success(session ? 'Session updated.' : 'Session scheduled.');
       navigate(`/trainer/sessions/${saved.id}`);
     } catch (error) {
@@ -153,7 +168,10 @@ function SessionForm({ groups, session, initialGroup }) {
           label="Group"
           required
           value={form.group_id}
-          onChange={set('group_id')}
+          onChange={(value) => {
+            set('group_id')(value);
+            setForm((current) => ({ ...current, student_ids: [] }));
+          }}
           error={errors.group_id}
           disabled={Boolean(session)}
           hint={session ? 'The group of a scheduled session cannot change.' : undefined}
@@ -162,6 +180,60 @@ function SessionForm({ groups, session, initialGroup }) {
             label: `${group.name} (${group.student_count} students)`,
           }))}
         />
+        {!session && (
+          <fieldset className="tr-field">
+            <legend className="tr-field__label">Who is invited</legend>
+            <label className="tr-checkbox">
+              <input
+                type="radio"
+                name="audience"
+                checked={form.audience === 'group'}
+                onChange={() => setForm((current) => ({ ...current, audience: 'group' }))}
+              />
+              <span>The whole group</span>
+            </label>
+            <label className="tr-checkbox">
+              <input
+                type="radio"
+                name="audience"
+                checked={form.audience === 'selected'}
+                onChange={() =>
+                  setForm((current) => ({ ...current, audience: 'selected', student_ids: [] }))
+                }
+              />
+              <span>Selected students only</span>
+            </label>
+            {form.audience === 'selected' && (
+              <Loaded result={{ ...members, data: members.data?.items ?? null }}>
+                {(students) =>
+                  students.length === 0 ? (
+                    <p className="tr-muted">This group has no students.</p>
+                  ) : (
+                    <div className="student-picker">
+                      {students.map((student) => (
+                        <label key={student.student_id} className="tr-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={form.student_ids.includes(student.student_id)}
+                            onChange={(event) =>
+                              set('student_ids')(
+                                event.target.checked
+                                  ? [...form.student_ids, student.student_id]
+                                  : form.student_ids.filter((id) => id !== student.student_id),
+                              )
+                            }
+                          />
+                          <span>{student.full_name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )
+                }
+              </Loaded>
+            )}
+            {errors.student_ids && <p className="tr-field__error">{errors.student_ids}</p>}
+          </fieldset>
+        )}
         <TextField
           label="Title"
           required

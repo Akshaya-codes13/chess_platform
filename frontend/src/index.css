@@ -1,41 +1,41 @@
 /* Chess Academy design tokens and base styles.
-   Navy, royal blue and a wood board are the identity; brass is reserved for rewards. */
+   Soft cream surfaces with espresso-brown ink and accents; brass is reserved for rewards. */
 
 :root {
-  --color-paper: #f3f5fa;
-  --color-surface: #ffffff;
-  --color-surface-sunk: #e9edf5;
-  --color-ink: #141c33;
-  --color-ink-soft: #45506b;
-  --color-ink-muted: #6a748c;
-  --color-rule: #d8deea;
-  --color-accent: #3451d1;
-  --color-accent-strong: #2840ad;
-  --color-accent-soft: #e3e8fb;
-  --color-accent-fill: #3451d1;
-  --color-accent-fill-hover: #2840ad;
+  --color-paper: #f7efe4;
+  --color-surface: #fffaf3;
+  --color-surface-sunk: #f0e4d3;
+  --color-ink: #3b2416;
+  --color-ink-soft: #654a37;
+  --color-ink-muted: #8a705c;
+  --color-rule: #e6d8c5;
+  --color-accent: #7a4a2a;
+  --color-accent-strong: #5e3820;
+  --color-accent-soft: #f1e2d0;
+  --color-accent-fill: #7a4a2a;
+  --color-accent-fill-hover: #643a20;
   --color-reward: #b7832f;
   --color-reward-soft: #f3e7d1;
-  --color-success: #2e7a4d;
-  --color-success-soft: #dcefe3;
+  --color-success: #3f7a4a;
+  --color-success-soft: #e1eedc;
   --color-danger: #b03e37;
-  --color-danger-soft: #f6e0de;
+  --color-danger-soft: #f6e0da;
   --color-warning: #9a5b12;
   --color-warning-soft: #f6e8d3;
-  --color-board-light: #ecdcc0;
-  --color-board-dark: #b48a62;
+  --color-board-light: #f0e0c6;
+  --color-board-dark: #b88b62;
   --color-board-select: rgba(183, 131, 47, 0.55);
   --color-board-last: rgba(183, 131, 47, 0.32);
   --color-board-check: rgba(176, 62, 55, 0.75);
   --color-piece-white: #ffffff;
-  --color-piece-black: #141c33;
-  --color-focus: #6f8cff;
+  --color-piece-black: #2e1b10;
+  --color-focus: #c08a5a;
   --color-nav-bg: var(--color-surface);
   --color-nav-ink: var(--color-ink-soft);
   --color-nav-ink-strong: var(--color-ink);
   --color-nav-hover: var(--color-surface-sunk);
   --color-nav-active: var(--color-accent-soft);
-  --color-deep: #111a33;
+  --color-deep: #3b2416;
 
   --font-sans:
     'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -63,20 +63,20 @@
 /* Theme is set on <html data-theme> by the inline script in index.html. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-paper: #0b1120;
-  --color-surface: #131b30;
-  --color-surface-sunk: #0e1527;
-  --color-ink: #e8ecf6;
-  --color-ink-soft: #b3bcd3;
-  --color-ink-muted: #838da8;
-  --color-rule: #24304d;
-  --color-accent: #8aa2ff;
-  --color-accent-strong: #a9bbff;
-  --color-accent-soft: #1d2a55;
-  --color-accent-fill: #4a66e8;
-  --color-accent-fill-hover: #5b77f0;
-  --color-nav-bg: #0e1527;
-  --color-nav-active: #1f2c5c;
+  --color-paper: #1a130e;
+  --color-surface: #251b14;
+  --color-surface-sunk: #150f0b;
+  --color-ink: #f3e8da;
+  --color-ink-soft: #d2c0aa;
+  --color-ink-muted: #a6907a;
+  --color-rule: #3b2d22;
+  --color-accent: #dcae80;
+  --color-accent-strong: #ecc59c;
+  --color-accent-soft: #3a2a1d;
+  --color-accent-fill: #9a6238;
+  --color-accent-fill-hover: #ab7044;
+  --color-nav-bg: #150f0b;
+  --color-nav-active: #3a2a1d;
   --color-reward-soft: #3a2f1b;
   --color-success: #6fbf8e;
   --color-success-soft: #1c3326;
@@ -86,7 +86,7 @@
   --color-warning-soft: #3a2c19;
   --color-board-light: #e2d0b0;
   --color-board-dark: #a07a55;
-  --color-deep: #0a1020;
+  --color-deep: #120c08;
 }
 
 *,
@@ -356,7 +356,100 @@ img {
   .mobile-topbar {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-2);
     margin-bottom: var(--space-3);
+  }
+
+  .account-menu {
+    position: relative;
+  }
+
+  .account-menu summary {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .account-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .account-menu summary:hover,
+  .account-menu[open] summary {
+    background: var(--color-nav-hover);
+    color: var(--color-ink);
+  }
+
+  .account-menu summary svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .account-menu-pages {
+    display: grid;
+    padding-bottom: var(--space-1);
+    margin-bottom: var(--space-1);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .account-menu-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--space-1));
+    z-index: 20;
+    display: grid;
+    min-width: 180px;
+    padding: var(--space-2);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  }
+
+  .account-menu-name {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-rule);
+    margin-bottom: var(--space-1);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .account-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius);
+    background: none;
+    color: var(--color-ink);
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .account-menu-item:hover {
+    background: var(--color-nav-hover);
+  }
+
+  .account-menu-item.is-active {
+    background: var(--color-nav-active);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .account-menu-panel {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
   }
 
   h1 {
@@ -1115,7 +1208,7 @@ img {
   padding: var(--space-5);
   border-radius: var(--radius-lg);
   background: var(--color-deep);
-  color: #e7ebe6;
+  color: #f3e8da;
   background-image: repeating-conic-gradient(rgba(255, 255, 255, 0.04) 0 25%, transparent 0 50%);
   background-size: 48px 48px;
   background-position: right -12px center;
@@ -1141,7 +1234,7 @@ img {
 
 .next-up .row-meta,
 .next-up .progress-label {
-  color: #c2cbc6;
+  color: #d6c3ad;
 }
 
 .next-up .progress-track {
@@ -1154,7 +1247,7 @@ img {
 
 .next-up .btn-primary {
   background: var(--color-reward);
-  color: #1c2833;
+  color: #2e1b10;
 }
 
 /* --- Puzzles ----------------------------------------------------------- */
@@ -1288,7 +1381,7 @@ img {
   width: 30%;
   height: 30%;
   border-radius: 50%;
-  background: rgba(28, 40, 51, 0.32);
+  background: rgba(59, 36, 22, 0.32);
 }
 
 .square.is-capture::after {
@@ -1296,7 +1389,7 @@ img {
   position: absolute;
   inset: 4%;
   border-radius: 50%;
-  border: 5px solid rgba(28, 40, 51, 0.32);
+  border: 5px solid rgba(59, 36, 22, 0.32);
 }
 
 .square:focus-visible {
@@ -1319,7 +1412,7 @@ img {
 
 .piece-white {
   color: var(--color-piece-white);
-  -webkit-text-stroke: 1.5px #1c2833;
+  -webkit-text-stroke: 1.5px #2e1b10;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
@@ -1362,7 +1455,7 @@ img {
   place-content: center;
   justify-items: center;
   gap: var(--space-3);
-  background: rgba(20, 26, 31, 0.78);
+  background: rgba(36, 22, 13, 0.78);
   color: #fff;
   border-radius: var(--radius);
 }
@@ -1445,7 +1538,7 @@ img {
 }
 
 .turn-dot.is-black {
-  background: #1c2833;
+  background: #2e1b10;
 }
 
 .panel-section {
@@ -1853,7 +1946,12 @@ img {
   background-color: var(--color-deep);
   /* Fixed-size tiles keep the squares square whatever the panel height. */
   background-image:
-    linear-gradient(165deg, rgba(17, 26, 51, 0.1) 0%, rgba(10, 16, 32, 0.55) 55%, rgba(10, 16, 32, 0.9) 100%),
+    linear-gradient(
+      165deg,
+      rgba(59, 36, 22, 0.1) 0%,
+      rgba(36, 22, 13, 0.55) 55%,
+      rgba(36, 22, 13, 0.9) 100%
+    ),
     repeating-conic-gradient(var(--color-board-light) 0 25%, var(--color-board-dark) 0 50%);
   background-size:
     100% 100%,
@@ -1884,7 +1982,7 @@ img {
   border-left: none;
   border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   background: var(--color-surface);
-  box-shadow: 0 24px 60px rgba(9, 14, 30, 0.18);
+  box-shadow: 0 24px 60px rgba(59, 36, 22, 0.16);
 }
 
 .login-form h1 {

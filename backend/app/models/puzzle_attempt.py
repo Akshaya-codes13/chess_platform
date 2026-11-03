@@ -12,6 +12,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -25,6 +26,10 @@ class PuzzleAttempt(TimestampMixin, Base):
         CheckConstraint(
             "time_taken_seconds IS NULL OR time_taken_seconds >= 0",
             name="non_negative_time_taken",
+        ),
+        CheckConstraint(
+            "hints_used >= 0",
+            name="non_negative_hints_used",
         ),
     )
 
@@ -66,6 +71,21 @@ class PuzzleAttempt(TimestampMixin, Base):
     time_taken_seconds: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True,
+    )
+
+    # The student's UCI moves, in order, exactly as submitted.
+    moves: Mapped[list] = mapped_column(
+        JSONB,
+        default=list,
+        server_default=text("'[]'::jsonb"),
+        nullable=False,
+    )
+
+    hints_used: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=text("0"),
+        nullable=False,
     )
 
     attempted_at: Mapped[datetime] = mapped_column(

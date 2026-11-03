@@ -240,6 +240,18 @@ function ProgressView({ data }) {
                 label: 'Last activity',
                 render: (row) => (row.last_activity_at ? formatDate(row.last_activity_at) : '—'),
               },
+              {
+                key: 'review',
+                label: 'Review',
+                render: (row) => (
+                  <Link
+                    to={`/trainer/assignments/${data.assignment_id}/submissions/${row.student_id}`}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    {row.submission_status === 'submitted' ? 'Review submission' : 'View attempts'}
+                  </Link>
+                ),
+              },
             ]}
           />
         ) : (

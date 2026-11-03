@@ -21,7 +21,8 @@ const EMPTY = {
 };
 
 export default function PuzzleFormPage() {
-  const { params } = useRoute();
+  // `?fen=` prefills a new puzzle, e.g. from the board editor.
+  const { params, query } = useRoute();
   const editing = Boolean(params.puzzleId);
   const taxonomy = useLoader(() => trainerApi.taxonomy(), []);
   const existing = useLoader(
@@ -46,13 +47,13 @@ export default function PuzzleFormPage() {
         subtitle="Enter the starting position as FEN and the full solution as UCI moves (e.g. e2e4 e7e5)."
       />
       <Loaded result={ready}>
-        {(tax) => <PuzzleForm taxonomy={tax} puzzle={existing.data} />}
+        {(tax) => <PuzzleForm taxonomy={tax} puzzle={existing.data} initialFen={query.fen} />}
       </Loaded>
     </TrainerPage>
   );
 }
 
-function PuzzleForm({ taxonomy, puzzle }) {
+function PuzzleForm({ taxonomy, puzzle, initialFen }) {
   const [form, setForm] = useState(() =>
     puzzle
       ? {
@@ -65,7 +66,7 @@ function PuzzleForm({ taxonomy, puzzle }) {
           theme_ids: puzzle.themes.map((theme) => theme.id),
           explanation: puzzle.explanation ?? '',
         }
-      : EMPTY,
+      : { ...EMPTY, fen: initialFen ?? '' },
   );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);

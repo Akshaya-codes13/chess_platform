@@ -8,6 +8,7 @@ import {
   setTokens,
 } from '../api/client';
 import { navigate } from '../routes/router';
+import { resetBoardPrefs } from './preferencesStore';
 
 // status: 'loading' | 'authenticated' | 'anonymous'
 let state = { user: null, status: hasRefreshToken() ? 'loading' : 'anonymous' };
@@ -62,6 +63,7 @@ async function logout() {
     // The local session is cleared either way.
   } finally {
     setTokens(null);
+    resetBoardPrefs();
     setState({ user: null, status: 'anonymous' });
     // The next account may have a different role, so do not keep this portal's page.
     navigate('/login', { replace: true });
