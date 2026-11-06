@@ -6,6 +6,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     String,
+    UniqueConstraint,
     Uuid,
     func,
     text,
@@ -18,6 +19,11 @@ from app.models.base import TimestampMixin
 
 class RefreshToken(TimestampMixin, Base):
     __tablename__ = "refresh_tokens"
+    # Mirrors the schema created by migration 29dd76e3604b: the unique
+    # constraint keeps its original (pre-naming-convention) name.
+    __table_args__ = (
+        UniqueConstraint("token_jti", name="unique_refresh_token_jti"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -35,7 +41,6 @@ class RefreshToken(TimestampMixin, Base):
 
     token_jti: Mapped[str] = mapped_column(
         String(255),
-        unique=True,
         nullable=False,
     )
 
@@ -47,6 +52,7 @@ class RefreshToken(TimestampMixin, Base):
     expires_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
+        index=True,
     )
 
     revoked_at: Mapped[datetime | None] = mapped_column(

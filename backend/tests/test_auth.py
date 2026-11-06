@@ -497,3 +497,15 @@ def test_demo_login_skips_inactive_accounts(client, demo_accounts):
         session.close()
 
     assert client.post("/auth/demo-login", json={"role": "trainer"}).status_code == 404
+
+
+def test_demo_login_is_never_served_in_production(client, demo_accounts, monkeypatch):
+    # Startup validation rejects this combination; the endpoints refuse it
+    # too, in case the flag is changed on a running production process.
+    monkeypatch.setattr(settings, "app_env", "production")
+
+    assert client.get("/auth/demo").json() == {"enabled": False, "accounts": []}
+    for role in ("admin", "trainer", "student"):
+        response = client.post("/auth/demo-login", json={"role": role})
+        assert response.status_code == 404
+        assert "access_token" not in response.json()

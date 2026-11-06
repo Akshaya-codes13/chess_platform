@@ -97,6 +97,7 @@ Create `backend/.env` using `backend/.env.example` as a template.
 Configure:
 
 ```env
+APP_ENV=development
 DATABASE_URL=postgresql+psycopg2://chess:chess@db:5432/chess_academy
 REDIS_URL=redis://redis:6379/0
 SECRET_KEY=your-secret-key
@@ -104,6 +105,18 @@ CORS_ORIGINS=http://localhost:5173
 ```
 
 Generate a strong secret key for your local environment. Never commit your actual `.env` file.
+
+With `APP_ENV=production` the backend refuses to start if `SECRET_KEY` is
+empty, shorter than 32 characters or a placeholder, or if
+`DEMO_LOGIN_ENABLED=true` (passwordless demo sign-in). Generate a key with
+`python -c "import secrets; print(secrets.token_urlsafe(48))"`.
+
+`.env` is excluded from Docker images by `backend/.dockerignore`; containers
+receive it at runtime through `env_file`.
+
+Tests (`docker compose exec backend pytest`) run against a separate
+`chess_academy_test` database and Redis DB 15, created and migrated
+automatically; development data is never touched.
 
 ### 3. Configure frontend environment variables
 

@@ -107,6 +107,12 @@ def login(
     return issue_tokens(db, user)
 
 
+def demo_login_allowed() -> bool:
+    """Demo login is never served in production, even if the flag is set
+    after startup (startup validation already rejects that combination)."""
+    return settings.demo_login_enabled and settings.app_env != "production"
+
+
 @router.get(
     "/demo",
     response_model=DemoAccountsResponse,
@@ -116,7 +122,7 @@ def list_demo_accounts(
 ):
     """List the demo accounts available for one-click sign-in."""
 
-    if not settings.demo_login_enabled:
+    if not demo_login_allowed():
         return {"enabled": False, "accounts": []}
 
     return {"enabled": True, "accounts": get_demo_accounts(db)}
@@ -133,7 +139,7 @@ def demo_login(
 ):
     """Sign in to a seeded demo account without a password (development only)."""
 
-    if not settings.demo_login_enabled:
+    if not demo_login_allowed():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Demo login is disabled.",

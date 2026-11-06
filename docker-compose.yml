@@ -20,7 +20,11 @@ services:
       - "6379:6379"
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        # Test tools (pytest, httpx) for `docker compose exec backend pytest`.
+        INSTALL_DEV: "true"
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     env_file: ./backend/.env
     ports:

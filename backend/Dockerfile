@@ -1,11 +1,15 @@
-
 FROM python:3.12-slim
 
 WORKDIR /code
 
-COPY requirements.txt .
+# INSTALL_DEV=true also installs the test tools (requirements-dev.txt).
+# docker-compose.yml enables it for the development backend service only.
+ARG INSTALL_DEV=false
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements-dev.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt \
+    && if [ "$INSTALL_DEV" = "true" ]; then pip install --no-cache-dir -r requirements-dev.txt; fi
 
 COPY . .
 
